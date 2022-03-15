@@ -1,5 +1,14 @@
 [package]
 name = "symparser"
+license = "MIT/Apache-2.0"
+authors = ["parser-implementations"]
+categories = ["command-line-utilities"]
+description = "Parser implementation of the SYM file format conceived by PEAK-System"
+homepage = "https://github.com/tsabelmann/symparser-rs"
+documentation = "https://docs.rs/symparser"
+keywords = ["sym", "peak", "can", "decode", "encode"]
+repository = "https://github.com/tsabelmann/symparser-rs"
+readme = "README.md"
 version = "0.1.0"
 edition = "2021"
 
