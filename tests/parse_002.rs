@@ -22,8 +22,14 @@ fn parse_003() {
     let mut pairs = SymParser::parse(Rule::sym, &string).unwrap().into_iter();
     let mut inner_pair = pairs.next().unwrap().into_inner();
 
-    assert_eq!(inner_pair.next().unwrap().as_str(), "FormatVersion=6.0");
-    assert_eq!(inner_pair.next().unwrap().as_str(), "Title=\"EXAMPLE\"");
+    assert_eq!(
+        inner_pair.next().unwrap().as_str().trim(),
+        "FormatVersion=6.0"
+    );
+    assert_eq!(
+        inner_pair.next().unwrap().as_str().trim(),
+        "Title=\"EXAMPLE\""
+    );
     assert_eq!(inner_pair.next(), None);
 }
 
