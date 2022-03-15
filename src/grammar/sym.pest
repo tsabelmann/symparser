@@ -10,10 +10,9 @@ bool_true = { "True" }
 bool_false = { "False" }
 bool = { bool_true | bool_false }
 
-sym = {format_version ~ title ~ body}
+sym = {format_version ~ title ~ enums? ~ signals? ~ send? ~ receive? ~ sendreceive?}
 format_version = {"FormatVersion" ~ "=" ~ "6.0"}
 title = {"Title" ~ "=" ~ string}
-body = { enums? ~ signals? ~ send? ~ receive? ~ sendreceive?}
 
 number = @{ decdigit+ }
 hexnumber = @{hexdigit+ ~ "h"}
