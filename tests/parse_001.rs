@@ -25,8 +25,3 @@ fn parse_001() {
     }
 }
 
-#[test]
-fn parse_002() {
-    let string = read_to_string("examples/example_002.sym").unwrap();
-    let _pairs = SymParser::parse(Rule::sym, &string).unwrap();
-}
