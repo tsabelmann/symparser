@@ -1,0 +1,77 @@
+// hello world
+
+FormatVersion=6.0 // Do not edit this line!
+UniqueVariables=True
+FloatDecimalPlaces=10
+Title="Hello World"
+BRS=False
+
+{ENUMS}
+// Hello World
+Enum=Enum1(-10..10="Hello World", // ABC
+  -2..-1="ABCDEF")
+Enum=Enum2(32="Hello World", 10000="") -b
+
+{SIGNALS}
+Sig=Signal1 bit /u:Ah/s /e:Enum1 /d:1 /ln:"Signal 1" // Ein Kommentar
+Sig=Signal2 char -m /u:Ah/s /min:20 /max:100 /ln:"Signal 2" // Ein Kommentar
+Sig=Signal3 string 32 -m /u:Ah/s /ln:"Signal 3" // Ein Kommentar
+Sig=Signal4 signed 9 -h -m /u:Ah/s /f:-42.5 /o:1337.1337 /min:-9000 /max:10000 /p:6 /e:Enum1 /d:0 /ln:"Signal 4" // Ein Kommentar
+Sig=Signal5 unsigned 9 -b -m /u:Ah/s /f:-42.5 /o:1337.1337 /min:-9000 /p:6 /e:Enum1 /d:0 /ln:"Signal 5" // Ein Kommentar
+Sig=Signal6 float -m /u:Ah/s /f:-42.5 /o:1337.1337 /min:-9000 /max:10000 /p:6 /d:1000 /ln:"Signal 6" // Ein Kommentar
+Sig=Signal7 Enum1 16 -b -m /u:Ah/s /f:42 /o:1337 /p:0 /ln:"Signal 7" // Ein Kommentar
+Sig=Signal8 double -m /u:Ah/s /f:-43 /o:1337.1337 /min:-200 /max:200 /p:6 /d:20 /ln:"Signal 8" // Ein Kommentar
+Sig=Signal9 raw 24 /u:Ah/s /d:rABC /ln:"Signal 9" // Ein Kommentar
+
+{SEND}
+
+[Symbol2]
+ID=002h
+Type=FDStandard
+BRS=True
+Len=8
+Mux="<Empty>" 0,0 0 -o
+Var=Variable7 Enum1 0,8 -h -m -t /u:Ah/s /f:2.5 /o:42 /p:6 /ln:"Variable 7" // Ein Kommentar
+Var=Variable8 double 0,64 -m -t /u:Ah/s /f:1.5 /o:42.5 /min:-300.5 /max:300 /p:6 /ln:"Variable 8" // Ein Kommentar
+Var=Variable9 raw 0,48 -t -s /u:Celsius /ln:"Variable 9" // Ein Kommentar
+
+[Symbol4]
+ID=00000041h // Ein Kommentar
+Type=FDExtended
+BRS=True
+Len=8
+CycleTime=20 -p
+Color=C0C0C0h
+Mux="<Empty>" 0,0 0 -t
+
+{RECEIVE}
+
+[Symbol3]
+ID=003h-040h // Ein Kommentar
+Type=FDStandard
+BRS=True
+Len=8
+Timeout=20
+MinInterval=2
+Color=0000FFh
+Mux="<Empty>" 0,0 0 -o -t
+
+{SENDRECEIVE}
+
+[Symbol1]
+ID=000h
+Len=8
+CycleTime=20 -p
+Timeout=30
+MinInterval=2
+Color=0000FFh
+Mux="<Empty>" 0,0 0 -o -t
+Var=Variable1 bit 0,1 -t /u:On/Off /e:Enum1 /d:1 /ln:"Variable 1" // Ein Kommentar
+Var=Variable2 char 1,8 -t /u:On/Off /min:20 /max:200 /p:0 /d:'(' /ln:"ABCD EFGH" // Ein Kommentar
+Var=Variable3 string 8,24 -m -t /u:"A h s" /d:ra /ln:"Variable 3" // Ein Kommentar
+Var=Variable4 signed 32,4 -t -s /u:Ah/s /f:0.0001 /o:1344 /min:1344 /max:1344 /p:6 /d:1344 /ln:"Variable 4" // Ein Kommentar
+Var=Variable5 unsigned 36,4 -t -s /u:Ah/s /f:0.0001 /o:1344 /max:1344 /p:6 /e:Enum1 /d:1344 /ln:"Variable 4" // Ein Kommentar
+Var=Variable6 float 32,32 -m -t -s /u:Ah/s /f:0.0001 /o:1344 /min:1344 /max:1344 /p:6 /ln:"Variable 4" // Ein Kommentar
+
+[Symbol5]
+ID=042h
