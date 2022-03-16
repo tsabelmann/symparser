@@ -79,7 +79,7 @@ char_variable = { "Var" ~ "=" ~ (ID | STRING) ~ "char" ~
 string_variable = { "Var" ~ "=" ~ (ID | STRING) ~ "string" ~
     DEC_NUMBER_LITERAL ~ "," ~ string_length ~
     big_endian_option? ~ trace_option? ~ standard_option? ~
-    signal_unit? ~ signal_default? ~ signal_long_name?
+    signal_unit? ~ default_string_option? ~ signal_long_name?
 }
 
 string_length = { "8" | "16" | "24" | "32" | "40" | "48" | "56" | "64" }
@@ -87,46 +87,66 @@ string_length = { "8" | "16" | "24" | "32" | "40" | "48" | "56" | "64" }
 signed_variable = { "Var" ~ "=" ~ (ID | STRING) ~ "signed" ~
     DEC_NUMBER_LITERAL ~ "," ~ DEC_NUMBER_LITERAL ~
     big_endian_option? ~ trace_option? ~ standard_option? ~
-    signal_unit? ~ signal_factor? ~ signal_offset? ~
+    signal_unit? ~ factor_option? ~ offset_option? ~
     signal_min? ~ signal_max? ~ signal_dec_points? ~ signal_enum? ~ signal_default? ~ signal_long_name?
 }
 
 unsigned_variable = { "Var" ~ "=" ~ (ID | STRING) ~ "unsigned" ~
     DEC_NUMBER_LITERAL ~ "," ~ DEC_NUMBER_LITERAL ~
     big_endian_option? ~ trace_option? ~ standard_option? ~
-    signal_unit? ~ signal_factor? ~ signal_offset? ~
+    signal_unit? ~ factor_option? ~ offset_option? ~
     signal_min? ~ signal_max? ~ signal_dec_points? ~ signal_enum? ~ signal_default? ~ signal_long_name?
 }
 
 float_variable = { "Var" ~ "=" ~ (ID | STRING) ~ "float" ~
     DEC_NUMBER_LITERAL ~ "," ~ "32" ~
     big_endian_option? ~ trace_option? ~ standard_option? ~
-    signal_unit? ~ signal_factor? ~ signal_offset? ~
+    signal_unit? ~ factor_option? ~ offset_option? ~
     signal_min? ~ signal_max? ~ signal_dec_points? ~ signal_enum? ~ signal_default? ~ signal_long_name?
 }
 
 double_variable = { "Var" ~ "=" ~ (ID | STRING) ~ "double" ~
     DEC_NUMBER_LITERAL ~ "," ~ "64" ~
     big_endian_option? ~ trace_option? ~ standard_option? ~
-    signal_unit? ~ signal_factor? ~ signal_offset? ~
+    signal_unit? ~ factor_option? ~ offset_option? ~
     signal_min? ~ signal_max? ~ signal_dec_points? ~ signal_enum? ~ signal_default? ~ signal_long_name?
 }
 
+enum_variable = { "Var" ~ "=" ~ (ID | STRING) ~ ID ~
+    DEC_NUMBER_LITERAL ~ "," ~ DEC_NUMBER_LITERAL ~
+    big_endian_option? ~ trace_option? ~ standard_option? ~
+    signal_unit? ~ factor_option? ~ offset_option? ~
+    signal_min? ~ signal_max? ~ signal_dec_points? ~ signal_enum? ~ signal_default? ~ signal_long_name?
+}
+
+raw_variable = { "Var" ~ "=" ~ (ID | STRING) ~ "raw" ~
+    DEC_NUMBER_LITERAL ~ "," ~ raw_length ~
+    big_endian_option? ~ trace_option? ~ standard_option? ~
+    signal_unit? ~ factor_option? ~ offset_option? ~
+    signal_min? ~ signal_max? ~ signal_dec_points? ~ signal_enum? ~ signal_default? ~ signal_long_name?
+}
+
+raw_length = { "8" | "16" | "24" | "32" | "40" | "48" | "56" | "64" }
+
 variable = { bit_variable |
     char_variable | string_variable | signed_variable |
-    unsigned_variable | float_variable | double_variable
+    unsigned_variable | float_variable | double_variable |
+    raw_variable
 }
+
+
 
 // message_signal = { "Var" ~ "=" ~ (ID | STRING) ~ signal_type ~ signal_start_length ~ signal_show_format? ~ signal_big_endian? ~ signal_trace? ~ signal_standard? ~ signal_unit? ~ signal_factor? ~ signal_offset? ~ signal_min? ~ signal_max? ~ signal_dec_points? ~ signal_enum? ~ signal_default? ~ signal_long_name?}
 signal_type = { "bit" | "char" | "string" | "signed" | "unsigned" | "float" | "enum" | "double" | "raw"}
 signal_start_length = { DEC_NUMBER_LITERAL ~ "," ~ DEC_NUMBER_LITERAL }
 signal_unit = { "/u:" ~ (ID | STRING) }
-signal_factor = { "/f:" ~ FLOAT_LITERAL }
-signal_offset = { "/o:" ~ FLOAT_LITERAL }
+factor_option = { "/f:" ~ FLOAT_LITERAL }
+offset_option = { "/o:" ~ FLOAT_LITERAL }
 signal_min = { "/min:" ~ FLOAT_LITERAL }
 signal_max = { "/max:" ~ FLOAT_LITERAL }
 signal_dec_points = { "/p:" ~ FLOAT_LITERAL }
 signal_enum = { "/e:" ~ ID }
 signal_default = { "/d:" ~ FLOAT_LITERAL }
+default_string_option = @{"/d:" ~ "r" ~ ASCII*}
 default_option_char = { "/d:" ~ "'" ~ ASCII ~ "'" }
 signal_long_name = { "/ln:" ~ STRING }
