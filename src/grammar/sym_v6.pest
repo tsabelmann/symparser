@@ -1,63 +1,78 @@
 WHITESPACE = _{ " " | "\t" | "\r" | "\n" }
-whitespaces = { " " | "\t" | "\r" | "\n" }
-COMMENT = _{ "//" ~ (! ("\n" | "\r\n" | "\r") ~ ANY)* ~ ("\n" | "\r\n" | "\r") }
+COMMENT = _{ ("//" ~ (! ("\n" | "\r") ~ ANY)*) | ("/*" ~ (! ("*/") ~ ANY)* ~ "*/") }
 
-octdigit = { '0' .. '7' }
-decdigit = { octdigit | '8' .. '9' }
-hexdigit = { decdigit | 'a' .. 'f' | 'A' .. 'F'}
-alpha = { 'a'..'z' | 'A'..'Z' }
+OCTDIGIT = @{ '0' .. '7' }
+DECDIGIT = @{ '0' .. '9' }
+HEXDIGIT = @{ '0' .. '9' | 'a' .. 'f' | 'A' .. 'F'}
+ALPHA = { 'a'..'z' | 'A'..'Z' }
 bool_true = { "True" }
 bool_false = { "False" }
-bool = { bool_true | bool_false }
+BOOL = { bool_true | bool_false }
 
-sym = {format_version ~ title ~ enums? ~ signals? ~ send? ~ receive? ~ sendreceive?}
-format_version = {"FormatVersion" ~ "=" ~ "6.0"}
-title = {"Title" ~ "=" ~ string}
+OCT_NUMBER_LITERAL = @{ OCTDIGIT+ ~ "o" }
+DEC_NUMBER_LITERAL = @{ DECDIGIT+ }
+HEX_NUMBER_LITERAL = @{HEXDIGIT+ ~ "h"}
 
-number = @{ decdigit+ }
-hexnumber = @{hexdigit+ ~ "h"}
-id = @{ (alpha | decdigit | "_" | "/")+ }
-string = {"\"" ~ (!"\"" ~ ANY)* ~ "\""}
+FLOAT_LITERAL = @{ ("+" | "-")? ~ (DECDIGIT+ ~ ("." ~ DECDIGIT*)? | "." ~ DECDIGIT*) }
+INT_LITERAL = @{ ("+" | "-")? ~ DEC_NUMBER_LITERAL }
+
+ID = @{ (ALPHA | DECDIGIT | "_" | "/")+ }
+STRING = {"\"" ~ (!"\"" ~ ANY)* ~ "\""}
+
+main = {SOI ~ sym ~ EOI}
+sym = {format_version ~ unique_variables? ~ float_decimal_places? ~ title ~ bitrate_switch? ~ enums? ~ signals? ~ send? ~ receive? ~ sendreceive?}
+format_version = { "FormatVersion" ~ "=" ~ "6.0" }
+unique_variables = { "UniqueVariables" ~ "=" ~ BOOL }
+float_decimal_places = { "FloatDecimalPlaces" ~ "=" ~ DEC_NUMBER_LITERAL }
+title = {"Title" ~ "=" ~ STRING}
+bitrate_switch = { "BRS" ~ "=" ~ BOOL }
+
+bin_option = { "-b" }
+dec_option = { "-d" }
+hex_option = { "-h" }
+big_endian_option = { "-m" }
+// trace_option = { "-t" }
+
+standard_option = { "-s" }
 
 enums = {"{ENUMS}" ~ enum_entry*}
-enum_entry = {"Enum" ~ "=" ~ id ~ "(" ~ enum_list? ~ ")" ~ binary_mask_option?}
-binary_mask_option = {"-b"}
+enum_entry = {"Enum" ~ "=" ~ ID ~ "(" ~ enum_list? ~ ")" ~ bin_option?}
 enum_list = {enum_item ~ ("," ~ enum_item)*}
-enum_item = {number ~ "=" ~ string | number ~ ".." ~ number ~ "=" ~ string }
+enum_item = {INT_LITERAL ~ "=" ~ STRING | INT_LITERAL ~ ".." ~ INT_LITERAL ~ "=" ~ STRING }
 
 signals = {"{SIGNALS}"}
 send = {"{SEND}" ~ message*}
 receive = {"{RECEIVE}" ~ message*}
 sendreceive = {"{SENDRECEIVE}" ~ message*}
 
-message = { "[" ~ (id | string) ~ "]" ~ message_id? ~ message_type? ~ message_brs? ~ message_length? ~ message_cycle? ~ message_color? ~ message_mux? ~ message_signals?}
-message_id = { "ID" ~ "=" ~ hexnumber }
+message = { "[" ~ (ID | STRING) ~ "]" ~ message_id? ~ message_type? ~ message_brs? ~ message_length? ~ message_cycle? ~ message_color? ~ message_mux? ~ message_signals?}
+message_id = { "ID" ~ "=" ~ HEX_NUMBER_LITERAL }
 message_type = { "Type" ~ "=" ~ ("Extended" | "Standard" | "FDExtended" | "FDStandard") }
-message_brs = { "BRS" ~ "=" ~ bool }
-message_length = { "Len" ~ "="  ~ number }
-message_cycle = { "CycleTime" ~ "=" ~ number ~ cycle_stopped? }
+message_brs = { "BRS" ~ "=" ~ BOOL }
+message_length = { "Len" ~ "="  ~ DEC_NUMBER_LITERAL }
+message_cycle = { "CycleTime" ~ "=" ~ DEC_NUMBER_LITERAL ~ cycle_stopped? }
 cycle_stopped = { "-p" }
-message_color = { "Color" ~ "=" ~ hexnumber }
-message_mux = { "Mux" ~ "=" ~ (id | string) ~ number ~ "," ~ number ~ number ~ disable_show_option? ~ trace_option?}
+message_color = { "Color" ~ "=" ~ HEX_NUMBER_LITERAL }
+message_mux = { "Mux" ~ "=" ~ (ID | STRING) ~ NUMBER ~ "," ~ NUMBER ~ NUMBER ~ disable_show_option? ~ trace_option?}
 disable_show_option = { "-o" }
 trace_option = { "-t" }
 
 message_signals = {message_signal+}
-message_signal = { "Var" ~ "=" ~ (id | string) ~ signal_type ~ signal_start_length ~ signal_show_format? ~ signal_big_endian? ~ signal_trace? ~ signal_standard? ~ signal_unit? ~ signal_factor? ~ signal_offset? ~ signal_min? ~ signal_max? ~ signal_dec_points? ~ signal_enum? ~ signal_default? ~ signal_long_name?}
+message_signal = { "Var" ~ "=" ~ (ID | STRING) ~ signal_type ~ signal_start_length ~ signal_show_format? ~ signal_big_endian? ~ signal_trace? ~ signal_standard? ~ signal_unit? ~ signal_factor? ~ signal_offset? ~ signal_min? ~ signal_max? ~ signal_dec_points? ~ signal_enum? ~ signal_default? ~ signal_long_name?}
 signal_type = { "bit" | "char" | "string" | "signed" | "unsigned" | "float" | "enum" | "double" | "raw"}
-signal_start_length = { number ~ "," ~ number }
+signal_start_length = { DEC_NUMBER_LITERAL ~ "," ~ DEC_NUMBER_LITERAL }
 signal_show_format = { bin_format | hex_format }
 bin_format = { "-b" }
 hex_format = { "-h" }
 signal_big_endian = { "-m" }
 signal_trace = { "-t" }
 signal_standard = { "-s" }
-signal_unit = { "/u:" ~ (id | string) }
-signal_factor = {"/f:" ~ number} // change to support floats
-signal_offset = {"/o:" ~ number} // change to support floats
-signal_min = {"/min:" ~ number} // change to support floats
-signal_max = {"/max:" ~ number} // change to support floats
-signal_dec_points = {"/p:" ~ number}
-signal_enum = { "/e:" ~ id }
-signal_default = { "/d:" ~ number } // change to support floats
-signal_long_name = { "/ln:" ~ string }
+signal_unit = { "/u:" ~ (ID | STRING) }
+signal_factor = { "/f:" ~ FLOAT_LITERAL }
+signal_offset = { "/o:" ~ FLOAT_LITERAL }
+signal_min = { "/min:" ~ FLOAT_LITERAL }
+signal_max = { "/max:" ~ FLOAT_LITERAL }
+signal_dec_points = { "/p:" ~ FLOAT_LITERAL }
+signal_enum = { "/e:" ~ ID }
+signal_default = { "/d:" ~ FLOAT_LITERAL }
+signal_long_name = { "/ln:" ~ STRING }
