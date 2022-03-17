@@ -19,7 +19,7 @@ ID = @{ (ALPHA | DECDIGIT | "_" | "/")+ }
 STRING = @{"\"" ~ (!"\"" ~ ANY)* ~ "\""}
 
 main = {SOI ~ sym ~ EOI}
-sym = {format_version ~ unique_variables? ~ float_decimal_places? ~ title ~ bitrate_switch? ~ enums? ~ signals? ~ send? ~ receive? ~ sendreceive?}
+sym = {format_version ~ unique_variables? ~ float_decimal_places? ~ title ~ bitrate_switch? ~ enums? ~ signals? ~ send? ~ receive? ~ send_receive?}
 format_version = { "FormatVersion" ~ "=" ~ "6.0" }
 unique_variables = { "UniqueVariables" ~ "=" ~ BOOL }
 float_decimal_places = { "FloatDecimalPlaces" ~ "=" ~ DEC_NUMBER_LITERAL }
@@ -42,8 +42,7 @@ enum_item = {INT_LITERAL ~ "=" ~ STRING | INT_LITERAL ~ ".." ~ INT_LITERAL ~ "="
 signals = {"{SIGNALS}"}
 send = {"{SEND}" ~ send_message*}
 receive = {"{RECEIVE}" ~ receive_message*}
-sendreceive = {"{SENDRECEIVE}" ~ send_receive_message*}
-
+send_receive = {"{SENDRECEIVE}" ~ send_receive_message*}
 
 send_message = {
     message_name ~ message_id ~ message_type ~
@@ -52,8 +51,24 @@ send_message = {
     (char_variable | string_variable | signed_variable | unsigned_variable |
     float_variable | double_variable | enum_variable | raw_variable)*
 }
-receive_message = { "abc" }
-send_receive_message = { "abc" }
+
+receive_message = {
+    message_name ~ (message_id | message_id_range) ~ message_type ~
+    bitrate_switch? ~ message_length? ~
+    message_timeout? ~ message_min_interval? ~
+    message_color? ~ message_mux? ~
+    (char_variable | string_variable | signed_variable | unsigned_variable |
+    float_variable | double_variable | enum_variable | raw_variable)*
+}
+
+send_receive_message = {
+    message_name ~ message_id ~ message_type ~
+    bitrate_switch? ~ message_length? ~
+    message_cycle_time? ~ message_timeout? ~ message_min_interval? ~
+    message_color? ~ message_mux? ~
+    (char_variable | string_variable | signed_variable | unsigned_variable |
+    float_variable | double_variable | enum_variable | raw_variable)*
+}
 
 message_name = { "[" ~ (ID | STRING) ~ "]" }
 message_id = { "ID" ~ "=" ~ HEX_NUMBER_LITERAL }
@@ -61,27 +76,27 @@ message_id_range = { "ID" ~ "=" ~ HEX_NUMBER_LITERAL ~ "-" ~ HEX_NUMBER_LITERAL}
 message_type = { "Type" ~ "=" ~ ("Extended" | "Standard" | "FDExtended" | "FDStandard") }
 message_length = { "Len" ~ "="  ~ DEC_NUMBER_LITERAL }
 message_cycle_time = { "CycleTime" ~ "=" ~ DEC_NUMBER_LITERAL ~ cycle_stopped? }
+message_timeout = { "Timeout" ~ "=" ~ DEC_NUMBER_LITERAL }
+message_min_interval = { "MinInterval" ~ "=" ~ DEC_NUMBER_LITERAL }
 cycle_stopped = { "-p" }
 message_color = { "Color" ~ "=" ~ HEX_NUMBER_LITERAL }
 message_mux = { "Mux" ~ "=" ~ STRING ~ DEC_NUMBER_LITERAL ~ "," ~ DEC_NUMBER_LITERAL ~ FLOAT_LITERAL ~ show_off_option? ~ trace_option?}
 
-// message = { "[" ~ (ID | STRING) ~ "]" ~ message_id? ~ message_type? ~ bitrate_switch? ~ message_length? ~ message_cycle_time? ~ message_color? ~ message_mux? ~ message_signals?}
-
 bit_variable = { "Var" ~ "=" ~ (ID | STRING) ~ "bit" ~
     trace_option ~ standard_option ~
     DEC_NUMBER_LITERAL ~ "," ~ "1" ~
-    signal_unit? ~ enum_option? ~ default_option? ~ long_name_option?
+    unit_option? ~ enum_option? ~ default_option? ~ long_name_option?
 }
 
 char_variable = { "Var" ~ "=" ~ (ID | STRING) ~ "char" ~
     trace_option ~ standard_option ~
-    DEC_NUMBER_LITERAL ~ "," ~ "8" ~ min_option? ~ max_option? ~ decimal_points_option? ~ default_option_char? ~ long_name_option?
+    DEC_NUMBER_LITERAL ~ "," ~ "8" ~ min_option? ~ max_option? ~ decimal_points_option? ~ default_char_option? ~ long_name_option?
 }
 
 string_variable = { "Var" ~ "=" ~ (ID | STRING) ~ "string" ~
     DEC_NUMBER_LITERAL ~ "," ~ string_length ~
     big_endian_option? ~ trace_option? ~ standard_option? ~
-    signal_unit? ~ default_string_option? ~ long_name_option?
+    unit_option? ~ default_string_option? ~ long_name_option?
 }
 
 string_length = { "8" | "16" | "24" | "32" | "40" | "48" | "56" | "64" }
@@ -89,50 +104,48 @@ string_length = { "8" | "16" | "24" | "32" | "40" | "48" | "56" | "64" }
 signed_variable = { "Var" ~ "=" ~ (ID | STRING) ~ "signed" ~
     DEC_NUMBER_LITERAL ~ "," ~ DEC_NUMBER_LITERAL ~
     big_endian_option? ~ trace_option? ~ standard_option? ~
-    signal_unit? ~ factor_option? ~ offset_option? ~
+    unit_option? ~ factor_option? ~ offset_option? ~
     min_option? ~ max_option? ~ decimal_points_option? ~ enum_option? ~ default_option? ~ long_name_option?
 }
 
 unsigned_variable = { "Var" ~ "=" ~ (ID | STRING) ~ "unsigned" ~
     DEC_NUMBER_LITERAL ~ "," ~ DEC_NUMBER_LITERAL ~
     big_endian_option? ~ trace_option? ~ standard_option? ~
-    signal_unit? ~ factor_option? ~ offset_option? ~
+    unit_option? ~ factor_option? ~ offset_option? ~
     min_option? ~ max_option? ~ decimal_points_option? ~ enum_option? ~ default_option? ~ long_name_option?
 }
 
 float_variable = { "Var" ~ "=" ~ (ID | STRING) ~ "float" ~
     DEC_NUMBER_LITERAL ~ "," ~ "32" ~
     big_endian_option? ~ trace_option? ~ standard_option? ~
-    signal_unit? ~ factor_option? ~ offset_option? ~
+    unit_option? ~ factor_option? ~ offset_option? ~
     min_option? ~ max_option? ~ decimal_points_option? ~ enum_option? ~ default_option? ~ long_name_option?
 }
 
 double_variable = { "Var" ~ "=" ~ (ID | STRING) ~ "double" ~
     DEC_NUMBER_LITERAL ~ "," ~ "64" ~
     big_endian_option? ~ trace_option? ~ standard_option? ~
-    signal_unit? ~ factor_option? ~ offset_option? ~
+    unit_option? ~ factor_option? ~ offset_option? ~
     min_option? ~ max_option? ~ decimal_points_option? ~ enum_option? ~ default_option? ~ long_name_option?
 }
 
 enum_variable = { "Var" ~ "=" ~ (ID | STRING) ~ ID ~
     DEC_NUMBER_LITERAL ~ "," ~ DEC_NUMBER_LITERAL ~
     big_endian_option? ~ trace_option? ~ standard_option? ~
-    signal_unit? ~ factor_option? ~ offset_option? ~
+    unit_option? ~ factor_option? ~ offset_option? ~
     min_option? ~ max_option? ~ decimal_points_option? ~ enum_option? ~ default_option? ~ long_name_option?
 }
 
 raw_variable = { "Var" ~ "=" ~ (ID | STRING) ~ "raw" ~
     DEC_NUMBER_LITERAL ~ "," ~ raw_length ~
     big_endian_option? ~ trace_option? ~ standard_option? ~
-    signal_unit? ~ factor_option? ~ offset_option? ~
+    unit_option? ~ factor_option? ~ offset_option? ~
     min_option? ~ max_option? ~ decimal_points_option? ~ enum_option? ~ default_option? ~ long_name_option?
 }
 
 raw_length = { "8" | "16" | "24" | "32" | "40" | "48" | "56" | "64" }
 
-
-// message_signal = { "Var" ~ "=" ~ (ID | STRING) ~ signal_type ~ signal_start_length ~ signal_show_format? ~ signal_big_endian? ~ signal_trace? ~ signal_standard? ~ signal_unit? ~ signal_factor? ~ signal_offset? ~ signal_min? ~ signal_max? ~ signal_dec_points? ~ signal_enum? ~ signal_default? ~ signal_long_name?}
-signal_unit = @{ "/u:" ~ (ID | STRING) }
+unit_option = @{ "/u:" ~ (ID | STRING) }
 factor_option = @{ "/f:" ~ FLOAT_LITERAL }
 offset_option = @{ "/o:" ~ FLOAT_LITERAL }
 min_option = @{ "/min:" ~ FLOAT_LITERAL }
@@ -141,5 +154,5 @@ decimal_points_option = @{ "/p:" ~ FLOAT_LITERAL }
 enum_option = @{ "/e:" ~ ID }
 default_option = @{ "/d:" ~ FLOAT_LITERAL }
 default_string_option = @{"/d:" ~ "r" ~ ASCII*}
-default_option_char = @{ "/d:" ~ "'" ~ ASCII ~ "'" }
+default_char_option = @{ "/d:" ~ "'" ~ ASCII ~ "'" }
 long_name_option = @{ "/ln:" ~ STRING }
