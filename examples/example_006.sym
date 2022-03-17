@@ -1,0 +1,66 @@
+// hello world
+
+FormatVersion=6.0 // Do not edit this line!
+UniqueVariables=True
+FloatDecimalPlaces=10
+Title="Hello World"
+BRS=False
+
+{ENUMS}
+// Hello World
+Enum=Enum1(-10..10="Hello World", // ABC
+  -2..-1="ABCDEF")
+Enum=Enum2(32="Hello World", 10000="") -b
+
+{SIGNALS}
+Sig=bit1 bit
+Sig=char1 char
+Sig=bit2 bit /u:Ah /e:Enum1 /d:1 /ln:"Ein Bit" // Ein Kommentar
+Sig=char2 char -h -m /u:Nm /min:20 /max:200 /ln:"Char 2" // Ein Kommentar
+Sig=string1 string 8
+Sig=string2 string 16 -m /u:Ah /d:rab /ln:"string2" // Ein Kommentar
+Sig=signed1 signed 8
+Sig=signed2 signed 8 -h -m /u:Ah /f:1.5 /o:42 /min:-100 /max:100 /p:6 /e:Enum1 /d:20 /ln:"signed 2" // Ein Kommentar
+Sig=float1 float
+Sig=float2 float -m /u:Ah /f:1.5 /o:20 /min:-20 /max:20 /p:6 /d:4 /ln:"Float 2" // Ein Kommentar
+Sig=enum1 Enum1 32 -h -m /u:Ah/s /f:20.1 /o:-1337.5 /p:6 /ln:"enum 1" // Ein Kommentar
+Sig=raw1 raw 8
+Sig=raw2 raw 16 /u:Ah /d:r200 /ln:"raw 2" // Ein Kommentar
+
+{SENDRECEIVE}
+
+[Symbol1]
+ID=000h
+Type=FDStandard
+BRS=True
+Len=8
+CycleTime=20
+Color=FFFF00h
+Mux="<Empty>" 0,0 0 -o -t
+Sig=bit1 0 /d:1
+Sig=char2 8
+Sig=float1 16 /d:2.1
+Sig=signed1 48 /d:20
+Sig=string1 56 /d:rc
+Sig=raw1 0 /d:r20
+Sig=enum1 0
+
+[Symbol2]
+ID=001h
+Len=8
+Var=bit1 bit 0,1
+Var=bit2 bit 1,1 -t /u:On/Off /e:Enum1 /d:1 /ln:"bit 2" // Ein Kommentar
+Var=char1 char 8,8
+Var=char2 char 16,8 -h -m -t /u:Ah /min:20 /max:200 /d:#5 /ln:"char 2" // Ein Kommentar
+Var=string1 string 24,8
+Var=string2 string 32,8 -m -t /u:Ah /d:ra /ln:"string 2" // Ein Kommentar
+Var=signed1 signed 2,6
+Var=signed2 signed 40,8 -h -m -t /u:Ah /f:42 /o:-1337.1337 /min:-500 /max:500 /p:6 /e:Enum1 /ln:"signed 2" // Ein Kommentar
+Var=enum1 Enum1 48,8 -b -m -t /u:Ah /f:42 /o:2 /p:6 /ln:"enum 1" // Ein Kommentar
+Var=raw1 raw 56,8 -t -s /u:Ah /d:r20 /ln:"raw 1" // Ein Kommentar
+
+[Symbol3]
+ID=003h
+Len=8
+Var=float1 float 0,32
+Var=float2 float 32,32 -m -t -s /u:Ah /f:42 /o:-1337.1337 /min:-200 /max:200 /p:6 /d:2 /ln:"float 2" // Ein Kommentar
