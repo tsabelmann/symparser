@@ -55,7 +55,7 @@ send_message = {
     bitrate_switch? ~ message_length? ~ message_cycle_time? ~
     message_color? ~ message_mux? ~
     (bit_variable | char_variable | string_variable | signed_variable | unsigned_variable |
-    float_variable | double_variable | enum_variable | raw_variable)*
+    float_variable | double_variable | enum_variable | raw_variable | signal_variable)*
 }
 
 receive_message = {
@@ -64,7 +64,7 @@ receive_message = {
     message_timeout? ~ message_min_interval? ~
     message_color? ~ message_mux? ~
     (bit_variable | char_variable | string_variable | signed_variable | unsigned_variable |
-    float_variable | double_variable | enum_variable | raw_variable)*
+    float_variable | double_variable | enum_variable | raw_variable | signal_variable)*
 }
 
 send_receive_message = {
@@ -73,7 +73,7 @@ send_receive_message = {
     message_cycle_time? ~ message_timeout? ~ message_min_interval? ~
     message_color? ~ message_mux? ~
     (bit_variable | char_variable | string_variable | signed_variable | unsigned_variable |
-    float_variable | double_variable | enum_variable | raw_variable)*
+    float_variable | double_variable | enum_variable | raw_variable | signal_variable)*
 }
 
 message_name = { "[" ~ (ID | STRING) ~ "]" }
@@ -156,6 +156,10 @@ raw_variable = { "Var" ~ "=" ~ (ID | STRING) ~ "raw" ~
 
 raw_length = { "8" | "16" | "24" | "32" | "40" | "48" | "56" | "64" }
 
+signal_variable = { "Sig" ~ "=" ~ (ID | STRING) ~
+    DEC_NUMBER_LITERAL ~ (default_option | default_char_option | default_string_option | default_raw_option)
+}
+
 // SIGNALS
 bit_signal = { "Sig" ~ "=" ~ (ID | STRING) ~ "bit" ~
     unit_option? ~ enum_option? ~ default_option? ~ long_name_option?
@@ -172,37 +176,41 @@ string_signal = { "Sig" ~ "=" ~ (ID | STRING) ~ "string" ~
 }
 
 signed_signal = { "Sig" ~ "=" ~ (ID | STRING) ~ "signed" ~
-    DEC_NUMBER_LITERAL ~ (bin_option | hex_option)? ~
-    big_endian_option? ~ unit_option? ~ factor_option? ~ offset_option? ~
+    DEC_NUMBER_LITERAL ~
+    (bin_option | hex_option)? ~ big_endian_option? ~
+    unit_option? ~ factor_option? ~ offset_option? ~
     min_option? ~ max_option? ~ decimal_points_option? ~ enum_option? ~ default_option? ~ long_name_option?
 }
 
 unsigned_signal = { "Sig" ~ "=" ~ (ID | STRING) ~ "unsigned" ~
-    DEC_NUMBER_LITERAL ~ (bin_option | hex_option)? ~
-    big_endian_option? ~ unit_option? ~ factor_option? ~ offset_option? ~
+    DEC_NUMBER_LITERAL ~
+    (bin_option | hex_option)? ~ big_endian_option? ~
+    unit_option? ~ factor_option? ~ offset_option? ~
     min_option? ~ max_option? ~ decimal_points_option? ~ enum_option? ~ default_option? ~ long_name_option?
 }
 
 float_signal = { "Sig" ~ "=" ~ (ID | STRING) ~ "float" ~
-    big_endian_option? ~ unit_option? ~ factor_option? ~ offset_option? ~
-    min_option? ~ max_option? ~ decimal_points_option? ~ default_option? ~ enum_option? ~ long_name_option?
+    big_endian_option? ~
+    unit_option? ~ factor_option? ~ offset_option? ~
+    min_option? ~ max_option? ~ decimal_points_option? ~ default_option? ~ long_name_option?
 }
 
 double_signal = { "Sig" ~ "=" ~ (ID | STRING) ~ "double" ~
-    big_endian_option? ~ unit_option? ~ factor_option? ~ offset_option? ~
-    min_option? ~ max_option? ~ decimal_points_option? ~ default_option? ~ enum_option? ~ long_name_option?
+    big_endian_option? ~
+    unit_option? ~ factor_option? ~ offset_option? ~
+    min_option? ~ max_option? ~ decimal_points_option? ~ default_option? ~ long_name_option?
 }
 
 enum_signal = { "Sig" ~ "=" ~ (ID | STRING) ~ ID ~
-    DEC_NUMBER_LITERAL ~ (bin_option | hex_option) ~ big_endian_option? ~
+    DEC_NUMBER_LITERAL ~
+    (bin_option | hex_option) ~ big_endian_option? ~
     unit_option? ~ factor_option? ~ offset_option? ~
-    min_option? ~ max_option? ~ decimal_points_option? ~ default_option? ~ enum_option? ~ long_name_option?
+    decimal_points_option? ~ long_name_option?
 }
 
 raw_signal = { "Sig" ~ "=" ~ (ID | STRING) ~ "raw" ~
-    raw_length ~ big_endian_option? ~
-    unit_option? ~ factor_option? ~ offset_option? ~
-    min_option? ~ max_option? ~ decimal_points_option? ~ enum_option? ~ default_string_option? ~ long_name_option?
+    raw_length ~
+    unit_option? ~ default_raw_option? ~ long_name_option?
 }
 
 unit_option = @{ "/u:" ~ (ID | STRING) }
@@ -215,5 +223,5 @@ enum_option = @{ "/e:" ~ ID }
 default_option = @{ "/d:" ~ FLOAT_LITERAL }
 default_string_option = @{"/d:" ~ "r" ~ ASCII*}
 default_char_option = @{ "/d:" ~ (ASCII | "#" ~ DEC_NUMBER_LITERAL) }
-default_raw_option = @{ "/d:" ~ "r" ~ DEC_NUMBER_LITERAL }
+default_raw_option = @{ "/d:" ~ "r" ~ ASCII* }
 long_name_option = @{ "/ln:" ~ STRING }
