@@ -11,15 +11,18 @@ BOOL = { TRUE_LITERAL | FALSE_LITERAL }
 
 OCT_NUMBER_LITERAL = @{ OCTDIGIT+ ~ "o" }
 DEC_NUMBER_LITERAL = @{ DECDIGIT+ }
-HEX_NUMBER_LITERAL = @{HEXDIGIT+ ~ "h"}
+HEX_NUMBER_LITERAL = @{ HEXDIGIT+ ~ "h" }
 FLOAT_LITERAL = @{ ("+" | "-")? ~ (DECDIGIT+ ~ ("." ~ DECDIGIT*)? | "." ~ DECDIGIT*) }
 INT_LITERAL = @{ ("+" | "-")? ~ DEC_NUMBER_LITERAL }
 
-ID = @{ (ALPHA | DECDIGIT | "_" | "/")+ }
+ID = @{ (ALPHA | DECDIGIT | "_" | "/" | "_" |  "-" | "%")+ }
+// ID = @{ (!NEWLINE ~ ASCII)+ }
 STRING = @{"\"" ~ (!"\"" ~ ANY)* ~ "\""}
 
 main = {SOI ~ sym ~ EOI}
-sym = {format_version ~ unique_variables? ~ float_decimal_places? ~ title ~ bitrate_switch? ~ enums? ~ signals? ~ send? ~ receive? ~ send_receive?}
+sym = {format_version ~ unique_variables? ~ float_decimal_places? ~ title ~ bitrate_switch? ~
+    enums? ~ signals? ~ send? ~ receive? ~ sendreceive?
+}
 format_version = { "FormatVersion" ~ "=" ~ "6.0" }
 unique_variables = { "UniqueVariables" ~ "=" ~ BOOL }
 float_decimal_places = { "FloatDecimalPlaces" ~ "=" ~ DEC_NUMBER_LITERAL }
@@ -35,9 +38,9 @@ trace_option = { "-t" }
 standard_option = { "-s" }
 
 enums = {"{ENUMS}" ~ enum_entry*}
-enum_entry = {"Enum" ~ "=" ~ ID ~ "(" ~ enum_list? ~ ")" ~ bin_option?}
-enum_list = {enum_item ~ ("," ~ enum_item)*}
-enum_item = {INT_LITERAL ~ "=" ~ STRING | INT_LITERAL ~ ".." ~ INT_LITERAL ~ "=" ~ STRING }
+enum_entry = { "Enum" ~ "=" ~ ID ~ "(" ~ enum_list? ~ ")" ~ bin_option?}
+enum_list = { enum_item ~ ("," ~ enum_item)* }
+enum_item = { INT_LITERAL ~ "=" ~ STRING | INT_LITERAL ~ ".." ~ INT_LITERAL ~ "=" ~ STRING }
 
 signals = {
     "{SIGNALS}" ~
@@ -47,11 +50,11 @@ signals = {
 
 send = {"{SEND}" ~ send_message*}
 receive = {"{RECEIVE}" ~ receive_message*}
-send_receive = {"{SENDRECEIVE}" ~ send_receive_message*}
+sendreceive = {"{SENDRECEIVE}" ~ send_receive_message*}
 
 // MESSAGES
 send_message = {
-    message_name ~ message_id ~ message_type ~
+    message_name ~ message_id ~ message_type? ~
     bitrate_switch? ~ message_length? ~ message_cycle_time? ~
     message_color? ~ message_mux? ~
     (bit_variable | char_variable | string_variable | signed_variable | unsigned_variable |
@@ -59,7 +62,7 @@ send_message = {
 }
 
 receive_message = {
-    message_name ~ (message_id | message_id_range) ~ message_type ~
+    message_name ~ (message_id_range | message_id) ~ message_type? ~
     bitrate_switch? ~ message_length? ~
     message_timeout? ~ message_min_interval? ~
     message_color? ~ message_mux? ~
@@ -68,7 +71,7 @@ receive_message = {
 }
 
 send_receive_message = {
-    message_name ~ message_id ~ message_type ~
+    message_name ~ message_id ~ message_type? ~
     bitrate_switch? ~ message_length? ~
     message_cycle_time? ~ message_timeout? ~ message_min_interval? ~
     message_color? ~ message_mux? ~
@@ -78,7 +81,7 @@ send_receive_message = {
 
 message_name = { "[" ~ (ID | STRING) ~ "]" }
 message_id = { "ID" ~ "=" ~ HEX_NUMBER_LITERAL }
-message_id_range = { "ID" ~ "=" ~ HEX_NUMBER_LITERAL ~ "-" ~ HEX_NUMBER_LITERAL}
+message_id_range = { "ID" ~ "=" ~ HEX_NUMBER_LITERAL ~ "-" ~ HEX_NUMBER_LITERAL }
 message_type = { "Type" ~ "=" ~ ("Extended" | "Standard" | "FDExtended" | "FDStandard") }
 message_length = { "Len" ~ "="  ~ DEC_NUMBER_LITERAL }
 message_cycle_time = { "CycleTime" ~ "=" ~ DEC_NUMBER_LITERAL ~ cycle_stopped? }
@@ -157,7 +160,7 @@ raw_variable = { "Var" ~ "=" ~ (ID | STRING) ~ "raw" ~
 raw_length = { "8" | "16" | "24" | "32" | "40" | "48" | "56" | "64" }
 
 signal_variable = { "Sig" ~ "=" ~ (ID | STRING) ~
-    DEC_NUMBER_LITERAL ~ (default_option | default_char_option | default_string_option | default_raw_option)
+    DEC_NUMBER_LITERAL ~ (default_raw_option | default_string_option | default_option | default_char_option)?
 }
 
 // SIGNALS
@@ -213,7 +216,7 @@ raw_signal = { "Sig" ~ "=" ~ (ID | STRING) ~ "raw" ~
     unit_option? ~ default_raw_option? ~ long_name_option?
 }
 
-unit_option = @{ "/u:" ~ (ID | STRING) }
+unit_option = @{ "/u:" ~ ((!NEWLINE ~ ASCII)+ | STRING) }
 factor_option = @{ "/f:" ~ FLOAT_LITERAL }
 offset_option = @{ "/o:" ~ FLOAT_LITERAL }
 min_option = @{ "/min:" ~ FLOAT_LITERAL }
@@ -221,7 +224,7 @@ max_option = @{ "/max:" ~ FLOAT_LITERAL }
 decimal_points_option = @{ "/p:" ~ FLOAT_LITERAL }
 enum_option = @{ "/e:" ~ ID }
 default_option = @{ "/d:" ~ FLOAT_LITERAL }
-default_string_option = @{"/d:" ~ "r" ~ ASCII*}
 default_char_option = @{ "/d:" ~ (ASCII | "#" ~ DEC_NUMBER_LITERAL) }
 default_raw_option = @{ "/d:" ~ "r" ~ ASCII* }
+default_string_option = @{ default_raw_option }
 long_name_option = @{ "/ln:" ~ STRING }

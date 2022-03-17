@@ -1,4 +1,4 @@
-use pest::{Parser, RuleType};
+use pest::Parser;
 use std::fs::read_to_string;
 use symparser::v6::{Rule, SymParser};
 

@@ -6,7 +6,7 @@ Enum=Heizung(0="Heizung aus", 1="Heizung an")
 Enum=Ladevorgang(0="Ladevorgang nicht aktiv", 1="Ladevorgang aktiv")
 Enum=Nachrichtentyp(0="Keine Nachricht", 1="Information", 2="Fehlermeldung")
 Enum=Fehlertexte(0="Fehler Parkbremse")
-Enum=Infotexte(0="Bremse bet�tigen", 1="Motor anhalten", 
+Enum=Infotexte(0="Bremse bet�tigen", 1="Motor anhalten",
   2="Neutralstellung w�hlen")
 
 {SENDRECEIVE}
