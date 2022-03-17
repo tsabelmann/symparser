@@ -6,8 +6,8 @@ Enum=Heizung(0="Heizung aus", 1="Heizung an")
 Enum=Ladevorgang(0="Ladevorgang nicht aktiv", 1="Ladevorgang aktiv")
 Enum=Nachrichtentyp(0="Keine Nachricht", 1="Information", 2="Fehlermeldung")
 Enum=Fehlertexte(0="Fehler Parkbremse")
-Enum=Infotexte(0="Bremse bet�tigen", 1="Motor anhalten", 
-  2="Neutralstellung w�hlen")
+Enum=Infotexte(0="Bremse betätigen", 1="Motor anhalten",
+  2="Neutralstellung wählen")
 
 {SENDRECEIVE}
 
@@ -26,7 +26,7 @@ Var="UNDEFINED_VALUE" unsigned 8,8
 ["Display RX2"]
 ID=6B0h
 Len=8
-Var="Ladezustand SOC" unsigned 32,8 /u:% /f:0.5
+Var="Ladezustand SOC" unsigned 32,8 /u:A /f:0.5
 
 ["Display RX3"]
 ID=00Fh
