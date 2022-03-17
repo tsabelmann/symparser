@@ -15,7 +15,7 @@ HEX_NUMBER_LITERAL = @{HEXDIGIT+ ~ "h"}
 FLOAT_LITERAL = @{ ("+" | "-")? ~ (DECDIGIT+ ~ ("." ~ DECDIGIT*)? | "." ~ DECDIGIT*) }
 INT_LITERAL = @{ ("+" | "-")? ~ DEC_NUMBER_LITERAL }
 
-ID = @{ (ALPHA | DECDIGIT | "_" | "/")+ }
+ID = @{ (ALPHA | DECDIGIT | "_" | "/" | "_" |  "-" | "%")+ }
 // ID = @{ (!NEWLINE ~ ASCII)+ }
 STRING = @{"\"" ~ (!"\"" ~ ANY)* ~ "\""}
 
@@ -38,9 +38,9 @@ trace_option = { "-t" }
 standard_option = { "-s" }
 
 enums = {"{ENUMS}" ~ enum_entry*}
-enum_entry = {"Enum" ~ "=" ~ ID ~ "(" ~ enum_list? ~ ")" ~ bin_option?}
-enum_list = {enum_item ~ ("," ~ enum_item)*}
-enum_item = {INT_LITERAL ~ "=" ~ STRING | INT_LITERAL ~ ".." ~ INT_LITERAL ~ "=" ~ STRING }
+enum_entry = { "Enum" ~ "=" ~ ID ~ "(" ~ enum_list? ~ ")" ~ bin_option?}
+enum_list = { enum_item ~ ("," ~ enum_item)* }
+enum_item = { INT_LITERAL ~ "=" ~ STRING | INT_LITERAL ~ ".." ~ INT_LITERAL ~ "=" ~ STRING }
 
 signals = {
     "{SIGNALS}" ~
