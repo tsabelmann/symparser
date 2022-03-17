@@ -1,8 +1,6 @@
 # symparser
 
-[![Crates.io](https://img.shields.io/crates/d/symparser)](https://crates.io/crates/symparser)[![Crates.io](https://img.shields.io/crates/v/symparser)](https://crates.io/crates/symparser)[![docs.rs](https://img.shields.io/docsrs/symparser)](https://docs.rs/crate/symparser/latest)![Crates.io](https://img.shields.io/crates/l/symparser)
-
-
+[![Crates.io](https://img.shields.io/crates/v/symparser)](https://crates.io/crates/symparser)[![docs.rs](https://img.shields.io/docsrs/symparser)](https://docs.rs/crate/symparser/latest)![Crates.io](https://img.shields.io/crates/l/symparser)[![Crates.io](https://img.shields.io/crates/d/symparser)](https://crates.io/crates/symparser)
 
 
 
