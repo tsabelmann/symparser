@@ -37,10 +37,8 @@ Len=8
 Mux="<Empty>" 0,0 0 -o
 // Var=Variable7 Enum1 0,8 -h -m -t /u:Ah/s /f:2.5 /o:42 /p:6 /ln:"Variable 7" // Ein Kommentar
 Var=Variable8 double 0,64 -m -t -s /u:Ah /f:0.111 /o:20 /ln:"Hello World" // Hello World
-Var=Variable9 string 0,64 -m -t -s /u:Ah /d:20 /ln:"Hello World" // Hello World
-// Var=Variable9 raw 0,48 -t -s /u:Celsius /ln:"Variable 9" // Ein Kommentar
-
-/*
+Var=Variable9 string 0,64 -m -t -s /u:Ah /d:ra c /ln:"Hello World" // Hello World
+Var=Variable9 raw 0,48 -t -s /u:Celsius /ln:"Variable 9" // Ein Kommentar
 
 [Symbol4]
 ID=00000041h // Ein Kommentar
@@ -51,9 +49,6 @@ CycleTime=20 -p
 Color=C0C0C0h
 Mux="<Empty>" 0,0 0 -t
 
-*/
-
-/*
 
 {RECEIVE}
 
@@ -67,6 +62,7 @@ MinInterval=2
 Color=0000FFh
 Mux="<Empty>" 0,0 0 -o -t
 
+
 {SENDRECEIVE}
 
 [Symbol1]
@@ -79,9 +75,7 @@ Color=0000FFh
 Mux="<Empty>" 0,0 0 -o -t
 Var=Variable1 bit 0,1 -t /u:On/Off /e:Enum1 /d:1 /ln:"Variable 1" // Ein Kommentar
 Var=Variable2 char 1,8 -t /u:On/Off /min:20 /max:200 // /p:0 /d:'(' /ln:"ABCD EFGH" // Ein Kommentar
-// Var=Variable3 string 8,24 -m -t /u:"A h s" /d:ra /ln:"Variable 3" // Ein Kommentar
-// Var=Variable4 signed 32,4 -t -s /u:Ah/s /f:0.0001 /o:1344 /min:1344 /max:1344 /p:6 /d:1344 /ln:"Variable 4" // Ein Kommentar
-// Var=Variable5 unsigned 36,4 -t -s /u:Ah/s /f:0.0001 /o:1344 /max:1344 /p:6 /e:Enum1 /d:1344 /ln:"Variable 4" // Ein Kommentar
-// Var=Variable6 float 32,32 -m -t -s /u:Ah/s /f:0.0001 /o:1344 /min:1344 /max:1344 /p:6 /ln:"Variable 4" // Ein Kommentar
-
-*/
+Var=Variable3 string 8,24 -m -t /u:"A h s" /d:ra /ln:"Variable 3" // Ein Kommentar
+Var=Variable4 signed 32,4 -t -s /u:Ah/s /f:0.0001 /o:1344 /min:1344 /max:1344 /p:6 /d:1344 /ln:"Variable 4" // Ein Kommentar
+Var=Variable5 unsigned 36,4 -t -s /u:Ah/s /f:0.0001 /o:1344 /max:1344 /p:6 /e:Enum1 /d:1344 /ln:"Variable 4" // Ein Kommentar
+Var=Variable6 float 32,32 -m -t -s /u:Ah/s /f:0.0001 /o:1344 /min:1344 /max:1344 /p:6 /ln:"Variable 4" // Ein Kommentar
