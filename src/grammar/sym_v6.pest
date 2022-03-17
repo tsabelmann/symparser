@@ -90,14 +90,16 @@ message_mux = { "Mux" ~ "=" ~ STRING ~ DEC_NUMBER_LITERAL ~ "," ~ DEC_NUMBER_LIT
 
 // VARIABLES
 bit_variable = { "Var" ~ "=" ~ (ID | STRING) ~ "bit" ~
-    trace_option ~ standard_option ~
     DEC_NUMBER_LITERAL ~ "," ~ "1" ~
+    trace_option ~ standard_option ~
     unit_option? ~ enum_option? ~ default_option? ~ long_name_option?
 }
 
 char_variable = { "Var" ~ "=" ~ (ID | STRING) ~ "char" ~
+    DEC_NUMBER_LITERAL ~ "," ~ "8" ~
+    (bin_option | hex_option)? ~ big_endian_option? ~
     trace_option ~ standard_option ~
-    DEC_NUMBER_LITERAL ~ "," ~ "8" ~ min_option? ~ max_option? ~ decimal_points_option? ~ default_char_option? ~ long_name_option?
+    unit_option? ~ min_option? ~ max_option? ~ default_char_option? ~ long_name_option?
 }
 
 string_variable = { "Var" ~ "=" ~ (ID | STRING) ~ "string" ~
@@ -110,14 +112,16 @@ string_length = { "8" | "16" | "24" | "32" | "40" | "48" | "56" | "64" }
 
 signed_variable = { "Var" ~ "=" ~ (ID | STRING) ~ "signed" ~
     DEC_NUMBER_LITERAL ~ "," ~ DEC_NUMBER_LITERAL ~
-    big_endian_option? ~ trace_option? ~ standard_option? ~
+    (bin_option | hex_option)? ~ big_endian_option? ~
+    trace_option? ~ standard_option? ~
     unit_option? ~ factor_option? ~ offset_option? ~
     min_option? ~ max_option? ~ decimal_points_option? ~ enum_option? ~ default_option? ~ long_name_option?
 }
 
 unsigned_variable = { "Var" ~ "=" ~ (ID | STRING) ~ "unsigned" ~
     DEC_NUMBER_LITERAL ~ "," ~ DEC_NUMBER_LITERAL ~
-    big_endian_option? ~ trace_option? ~ standard_option? ~
+    (bin_option | hex_option)? ~ big_endian_option? ~
+    trace_option? ~ standard_option? ~
     unit_option? ~ factor_option? ~ offset_option? ~
     min_option? ~ max_option? ~ decimal_points_option? ~ enum_option? ~ default_option? ~ long_name_option?
 }
@@ -126,28 +130,28 @@ float_variable = { "Var" ~ "=" ~ (ID | STRING) ~ "float" ~
     DEC_NUMBER_LITERAL ~ "," ~ "32" ~
     big_endian_option? ~ trace_option? ~ standard_option? ~
     unit_option? ~ factor_option? ~ offset_option? ~
-    min_option? ~ max_option? ~ decimal_points_option? ~ enum_option? ~ default_option? ~ long_name_option?
+    min_option? ~ max_option? ~ decimal_points_option? ~ default_option? ~ long_name_option?
 }
 
 double_variable = { "Var" ~ "=" ~ (ID | STRING) ~ "double" ~
     DEC_NUMBER_LITERAL ~ "," ~ "64" ~
     big_endian_option? ~ trace_option? ~ standard_option? ~
     unit_option? ~ factor_option? ~ offset_option? ~
-    min_option? ~ max_option? ~ decimal_points_option? ~ enum_option? ~ default_option? ~ long_name_option?
+    min_option? ~ max_option? ~ decimal_points_option? ~ default_option? ~ long_name_option?
 }
 
 enum_variable = { "Var" ~ "=" ~ (ID | STRING) ~ ID ~
     DEC_NUMBER_LITERAL ~ "," ~ DEC_NUMBER_LITERAL ~
-    big_endian_option? ~ trace_option? ~ standard_option? ~
+    (bin_option | hex_option)? ~ big_endian_option? ~
+    trace_option? ~ standard_option? ~
     unit_option? ~ factor_option? ~ offset_option? ~
-    min_option? ~ max_option? ~ decimal_points_option? ~ enum_option? ~ default_option? ~ long_name_option?
+    decimal_points_option? ~ long_name_option?
 }
 
 raw_variable = { "Var" ~ "=" ~ (ID | STRING) ~ "raw" ~
     DEC_NUMBER_LITERAL ~ "," ~ raw_length ~
-    big_endian_option? ~ trace_option? ~ standard_option? ~
-    unit_option? ~ factor_option? ~ offset_option? ~
-    min_option? ~ max_option? ~ decimal_points_option? ~ enum_option? ~ default_option? ~ long_name_option?
+    trace_option? ~ standard_option? ~
+    unit_option? ~ default_raw_option? ~ long_name_option?
 }
 
 raw_length = { "8" | "16" | "24" | "32" | "40" | "48" | "56" | "64" }
@@ -158,8 +162,8 @@ bit_signal = { "Sig" ~ "=" ~ (ID | STRING) ~ "bit" ~
 }
 
 char_signal = { "Sig" ~ "=" ~ (ID | STRING) ~ "char" ~
-    big_endian_option? ~
-    unit_option? ~ min_option? ~ max_option? ~ decimal_points_option? ~ default_char_option? ~ long_name_option?
+    (bin_option | hex_option)? ~ big_endian_option? ~
+    unit_option? ~ min_option? ~ max_option? ~ default_char_option? ~ long_name_option?
 }
 
 string_signal = { "Sig" ~ "=" ~ (ID | STRING) ~ "string" ~
@@ -210,5 +214,6 @@ decimal_points_option = @{ "/p:" ~ FLOAT_LITERAL }
 enum_option = @{ "/e:" ~ ID }
 default_option = @{ "/d:" ~ FLOAT_LITERAL }
 default_string_option = @{"/d:" ~ "r" ~ ASCII*}
-default_char_option = @{ "/d:" ~ "'" ~ ASCII ~ "'" }
+default_char_option = @{ "/d:" ~ (ASCII | "#" ~ DEC_NUMBER_LITERAL) }
+default_raw_option = @{ "/d:" ~ "r" ~ DEC_NUMBER_LITERAL }
 long_name_option = @{ "/ln:" ~ STRING }
