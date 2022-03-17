@@ -12,8 +12,6 @@ Enum=Enum1(-100..10="Hello World", // ABC
   -2..-1="ABCDEF")
 Enum=Enum2(32="Hello World", 10000="") -b
 
-/*
-
 {SIGNALS}
 Sig=Signal1 bit /u:Ah/s /e:Enum1 /d:1 /ln:"Signal 1" // Ein Kommentar
 Sig=Signal2 char -m /u:Ah/s /min:20 /max:100 /ln:"Signal 2" // Ein Kommentar
@@ -24,8 +22,6 @@ Sig=Signal6 float -m /u:Ah/s /f:-42.5 /o:1337.1337 /min:-9000 /max:10000 /p:6 /d
 Sig=Signal7 Enum1 16 -b -m /u:Ah/s /f:42 /o:1337 /p:0 /ln:"Signal 7" // Ein Kommentar
 Sig=Signal8 double -m /u:Ah/s /f:-43 /o:1337.1337 /min:-200 /max:200 /p:6 /d:20 /ln:"Signal 8" // Ein Kommentar
 Sig=Signal9 raw 24 /u:Ah/s /d:rABC /ln:"Signal 9" // Ein Kommentar
-
-*/
 
 {SEND}
 
