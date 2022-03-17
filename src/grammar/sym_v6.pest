@@ -16,10 +16,13 @@ FLOAT_LITERAL = @{ ("+" | "-")? ~ (DECDIGIT+ ~ ("." ~ DECDIGIT*)? | "." ~ DECDIG
 INT_LITERAL = @{ ("+" | "-")? ~ DEC_NUMBER_LITERAL }
 
 ID = @{ (ALPHA | DECDIGIT | "_" | "/")+ }
+// ID = @{ (!NEWLINE ~ ASCII)+ }
 STRING = @{"\"" ~ (!"\"" ~ ANY)* ~ "\""}
 
 main = {SOI ~ sym ~ EOI}
-sym = {format_version ~ unique_variables? ~ float_decimal_places? ~ title ~ bitrate_switch? ~ enums? ~ signals? ~ send? ~ receive? ~ send_receive?}
+sym = {format_version ~ unique_variables? ~ float_decimal_places? ~ title ~ bitrate_switch? ~
+    enums? ~ signals? ~ send? ~ receive? ~ sendreceive?
+}
 format_version = { "FormatVersion" ~ "=" ~ "6.0" }
 unique_variables = { "UniqueVariables" ~ "=" ~ BOOL }
 float_decimal_places = { "FloatDecimalPlaces" ~ "=" ~ DEC_NUMBER_LITERAL }
@@ -47,11 +50,11 @@ signals = {
 
 send = {"{SEND}" ~ send_message*}
 receive = {"{RECEIVE}" ~ receive_message*}
-send_receive = {"{SENDRECEIVE}" ~ send_receive_message*}
+sendreceive = {"{SENDRECEIVE}" ~ send_receive_message*}
 
 // MESSAGES
 send_message = {
-    message_name ~ message_id ~ message_type ~
+    message_name ~ message_id ~ message_type? ~
     bitrate_switch? ~ message_length? ~ message_cycle_time? ~
     message_color? ~ message_mux? ~
     (bit_variable | char_variable | string_variable | signed_variable | unsigned_variable |
@@ -59,7 +62,7 @@ send_message = {
 }
 
 receive_message = {
-    message_name ~ (message_id | message_id_range) ~ message_type ~
+    message_name ~ (message_id | message_id_range) ~ message_type? ~
     bitrate_switch? ~ message_length? ~
     message_timeout? ~ message_min_interval? ~
     message_color? ~ message_mux? ~
@@ -68,7 +71,7 @@ receive_message = {
 }
 
 send_receive_message = {
-    message_name ~ message_id ~ message_type ~
+    message_name ~ message_id ~ message_type? ~
     bitrate_switch? ~ message_length? ~
     message_cycle_time? ~ message_timeout? ~ message_min_interval? ~
     message_color? ~ message_mux? ~
